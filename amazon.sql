@@ -29,3 +29,14 @@ VALUES ("toaster", "housewares", 45.99, 22),
 
 
 SELECT * FROM products;
+
+-- SELECT * FROM products WHERE stock_quantity < 20 ORDER BY stock_quantity DESC;
+-- INSERT INTO products SET ?;
+
+-- SELECT * FROM products WHERE ?;
+-- DELETE FROM products WHERE ?;
+-- UPDATE products SET ? WHERE ?;
+
+-- SELECT item_id, product_name, department_name, price, stock_quantity FROM products WHERE ?
+
+

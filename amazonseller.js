@@ -101,5 +101,83 @@ var viewLowInventory = function() {
     });
 };
 
+var addToInventory = function() {
+    askForID();
+};
 
 
+var addNewProduct = function() {
+    inquirer.prompt([
+        {
+            name: 'name',
+            type: 'input',
+            message: 'Enter the product name:'
+        },
+        {
+            name: 'department',
+            type: 'input',
+            message: 'Enter the product department:'
+        },
+        {
+            name: 'price',
+            type: 'input',
+            message: 'Enter the product price:',
+            validate: (value) => {
+                if (!isNaN(value) && value > 0) {
+                    return true;
+                } else {
+                    console.log(chalk.red(` => Oops, please enter a number greater than 0`));
+                    return false;
+                }
+            }
+        }, 
+        {
+            name: 'stockNum',
+            type: 'input',
+            message: 'Enter the number of items in stock:',
+            validate: (value) => {
+                if (!isNaN(value) && value > 0) {
+                    return true;
+                } else {
+                    console.log(chalk.red(` => Oops, please enter a number greater than 0`));
+                    return false;
+                }
+            }
+        }
+    ]).then((answers) => {
+        connection.query('INSERT INTO products SET ?', {
+            product_name: answers.name,
+            department_name: answers.department,
+            price: answers.price,
+            stock_quantity: answers.stockNum
+        }, (err, res) => {
+            if (err) throw err;
+            console.log(chalk.blue.bold('\n\tItem successfully added!'));
+            viewActiveProducts();
+        });
+    });
+};
+
+
+
+var askForID = function() {
+    inquirer.prompt({
+        name: 'itemID',
+        type: 'input',
+        message: 'Enter the ID of the item you\'d like to update:',
+        // validate input is number from 1-10
+        validate: (value) => {
+            if (!isNaN(value) && (value > 0 && value <= 12)) {
+                return true;
+            } else {
+                console.log(chalk.red(' => Please enter a number from 1-12'));
+                return false;
+            }
+        }
+        // select all rows where ID = user's input
+    }).then((answer) => {
+        connection.query('SELECT * FROM products WHERE ?', { item_id: answer.itemID }, (err, res) => {
+            confirmItem(res[0].product_name, res);
+        });
+    });
+};
