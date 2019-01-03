@@ -67,11 +67,36 @@ var viewActiveProducts = function() {
         });
 
         for (var i = 0; i < res.length; i++) {
-            listTable.push([res[i].item_id, res[i].product_name, res[i].stock_quantity, `$${res[i].price}`]);
+            listTable.push([res[i].item_id, 
+                res[i].product_name, 
+                res[i].stock_quantity, 
+                `$${res[i].price}`]);
             // console.log(chalk.blue.bold(`\n\tItem ID: ${res[i].item_id}\n\tProduct Name: ${res[i].product_name}\n\tPrice: $${res[i].price}\n`));
         }
 
         console.log(`\n\n${listTable.toString()}\n\n`);
+        connection.end();
+    });
+};
+
+var viewLowInventory = function() {
+    connection.query(`SELECT * FROM products WHERE stock_quantity < 20 ORDER BY stock_quantity DESC`, (err, res) => {
+        if (res.length > 0) {
+            var listTable = new Table({
+                head: ['Item ID', 'Product Name', 'In Stock', 'Price'],
+                colWidths: [10, 45, 10, 12]
+            });
+
+            for (var i = 0; i < res.length; i++) {
+                listTable.push([res[i].item_id, res[i].product_name, res[i].stock_quantity, `$${res[i].price}`]);
+                // console.log(chalk.blue.bold(`\n\tItem ID: ${res[i].item_id}\n\tProduct Name: ${res[i].product_name}\n\tPrice: $${res[i].price}\n`));
+            }
+
+            console.log(`\n\n${listTable.toString()}\n\n`);
+
+        } else {
+            console.log(chalk.blue.bold('\n\tNo low-stock items!\n'));
+        }
         connection.end();
     });
 };
