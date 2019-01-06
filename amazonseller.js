@@ -126,7 +126,7 @@ var addNewProduct = function() {
                 if (!isNaN(value) && value > 0) {
                     return true;
                 } else {
-                    console.log(chalk.red(` => Oops, please enter a number greater than 0`));
+                    console.log(chalk.red.bold(` => Oops, please enter a number greater than 0`));
                     return false;
                 }
             }
@@ -181,3 +181,88 @@ var askForID = function() {
         });
     });
 };
+
+var confirmItem = function(product, object) {
+    inquirer.prompt({
+        name: 'confirmItem',
+        type: 'confirm',
+        message: `You chose` + chalk.blue.bold(` '${product}'. `) + `Is this correct?`
+    }).then((answer) => {
+        if (answer.confirmItem) {
+            itemToUpdate = {
+                item_id: object[0].item_id,
+                product_name: object[0].product_name,
+                department_name: object[0].department_name,
+                price: object[0].price,
+                stock_quantity: object[0].stock_quantity,
+                product_sales: object[0].product_sales
+            };
+            askHowMany();
+        } else {
+            askForID();
+        }
+    });
+};
+
+
+var askHowMany = function() {
+    inquirer.prompt({
+        name: 'howMany',
+        type: 'input',
+        message: 'Enter the quantity you would like to add:',
+        validate: (value) => {
+            if (!isNaN(value) && value > 0) {
+                return true;
+            } else {
+                console.log(chalk.red(' => Oops, please enter a number greater than 0'));
+                return false;
+            }
+        }
+    }).then((answer) => {
+        itemToUpdate.howMany = answer.howMany;
+        connection.query('UPDATE products SET ? WHERE ?', [
+            {
+                stock_quantity: Number(itemToUpdate.stock_quantity) + Number(answer.howMany)
+            },
+            {
+                item_id: itemToUpdate.item_id
+            }
+        ], (err, res) => {
+            console.log(chalk.blue.bold(`\n\tInventory updated! '${itemToUpdate.product_name}' now has ${Number(itemToUpdate.stock_quantity) + Number(itemToUpdate.howMany)} items in stock\n`));
+            connection.end();
+        });
+    });
+}
+
+
+var deleteProduct = function() {
+    inquirer.prompt({
+        name: 'itemID',
+        type: 'input',
+        message: 'Enter the ID of the product you\'d like to remove:'
+    }).then((answer) => {
+        connection.query('SELECT * FROM products WHERE ?', { item_id: answer.itemID }, (err, res) => {
+            inquirer.prompt({
+                name: 'confirm',
+                type: 'confirm',
+                message: `You would like to delete` + chalk.blue.bold(` '${res[0].product_name}'. `) + `Is this correct?`
+            }).then((answer) => {
+                if (answer.confirm) {
+                    itemToDelete = {
+                        item_id: res[0].item_id
+                    };
+                    connection.query('DELETE FROM products WHERE ?', { item_id: itemToDelete.item_id }, (err, res) => {
+                        if (err) throw err;
+                        console.log(chalk.blue.bold('\n\tItem successfully removed!'));
+                        viewActiveProducts();
+                    });
+                } else {
+                    deleteProduct();
+                }
+            });
+        });
+    });
+};
+
+
+// chzwzrd/Bamazon
