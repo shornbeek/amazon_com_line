@@ -15,5 +15,5 @@
 <img src="https://i.ibb.co/5kKJjht/Screen-Shot-2019-01-07-at-4-45-05-PM.png" alt="Screen-Shot-2019-01-07-at-4-45-05-PM" border="0">
 
 <h2> Amazon Shopper</h2>
-<img src="https://i.ibb.co/5kKJjht/Screen-Shot-2019-01-07-at-4-45-05-PM.png" alt="Screen-Shot-2019-01-07-at-4-45-05-PM" border="0">
+
 <img src="https://i.ibb.co/PCn7Bb4/Screen-Shot-2019-01-07-at-5-01-55-PM.png" alt="Screen-Shot-2019-01-07-at-5-01-55-PM" border="0">
